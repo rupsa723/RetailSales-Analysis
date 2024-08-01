@@ -7,7 +7,6 @@
   - [Data Cleaning](#data-cleaning)
   - [Descriptive Statistics](#descriptive-statistics)
   - [Exploratory Data Analysis (EDA)](#exploratory-data-analysis-eda)
-  - [Outlier Detection](#outlier-detection)
   - [Feature Engineering](#feature-engineering)
   - [Customer Segmentation](#customer-segmentation)
   - [Time Series Analysis](#time-series-analysis)
@@ -61,12 +60,15 @@ The dataset contains the original dataset in `Orginal Dataset` folder:
 - `trans_date` was converted to datetime.
 - `response` was converted to integer.
 
+**Outlier Detection:**
+- **Box Plots:** No outliers detected in `tran_amount` and `response`.
+  
 ## Descriptive Statistics
 **Transaction Amount:**
-- Mean: $64.99
-- Standard Deviation: $22.86
-- Min: $10
-- Max: $105
+- Mean: 64.99
+- Standard Deviation: 22.86
+- Min: 10
+- Max: 105
 
 **Response:**
 - Mean: 0.11
@@ -75,13 +77,10 @@ The dataset contains the original dataset in `Orginal Dataset` folder:
 - Max: 1
 
 ## Exploratory Data Analysis (EDA)
-- **Distribution of Transaction Amounts:** Most transactions range between $40 and $100.
+- **Distribution of Transaction Amounts:** Most transactions range between 40 and 100.
 - **Distribution of Response:** Binary distribution with counts for 0 and 1.
 - **Distribution of Frequency:** Histogram of transaction frequencies per customer.
 - **Distribution of Monetary:** Histogram of total monetary values per customer.
-
-## Outlier Detection
-- **Box Plots:** No outliers detected in `tran_amount` and `response`.
 
 ## Feature Engineering
 A new dataset was created with:
@@ -142,10 +141,10 @@ A new dataset was created with:
 ## SQL Analysis Insights
 ### Customer Key Insights
 - **Unique Customers:** There are 6,884 unique customers.
-- **Average Transaction Amount per Customer:** $64.9951
-- **Average Spend per Customer:** $1,179.9
+- **Average Transaction Amount per Customer:** 64.99
+- **Average Spend per Customer:** 1,179.9
 - **Top 5 Customers by Transaction Count:** Customers CS4424 (39), CS4320 (38), CS3799 (36), CS5109 (35), and CS3013 (35).
-- **Top 5 Customers by Total Spend:** Customers CS4424 ($2,933), CS4320 ($2,647), CS5752 ($2,612), CS4660 ($2,527), and CS3799 ($2,513).
+- **Top 5 Customers by Total Spend:** Customers CS4424 (2,933), CS4320 (2,647), CS5752 (2,612), CS4660 (2,527), and CS3799 (2,513).
 
 ### RFM Analysis
 - **Largest Customer Segment:** The 'Recent, Medium, Medium Value' segment is the largest.
@@ -155,9 +154,9 @@ A new dataset was created with:
 
 ### Behavior and Performance by Segment
 - **Unique Customers by Segment:** Segment P1 has the largest unique customer base (2,493).
-- **Average Transaction Amount by Segment:** Segment P0 has the highest average transaction amount ($70.75).
+- **Average Transaction Amount by Segment:** Segment P0 has the highest average transaction amount (70.75).
 - **Average Frequency of Purchases by Segment:** Segment P0 has the highest average frequency (25.5).
-- **Average Monetary Value by Segment:** Segment P0 has the highest average monetary value ($1,802.6).
+- **Average Monetary Value by Segment:** Segment P0 has the highest average monetary value (1,802.6).
 - **Consistency in Average Order Value:** Segment P0 has the most consistent average order value with the lowest standard deviation (4.03).
 
 ### Campaign Performance
@@ -172,9 +171,9 @@ A new dataset was created with:
 - **Average Transaction Amount Trend:** Stable and consistent around $65 from 2011 to 2015.
 
 ### Customer Lifetime Value (CLV) Insights
-- **Maximum and Minimum CLV:** Maximum CLV is $1,716, and minimum CLV is $524.23.
-- **Total CLV by Segment:** Segment P1 has the highest total CLV ($74,771,322.94).
-- **Average CLV by Segment:** Segment P0 has the highest average CLV ($1,389).
+- **Maximum and Minimum CLV:** Maximum CLV is 1,716, and minimum CLV is 524.23.
+- **Total CLV by Segment:** Segment P1 has the highest total CLV (74,771,322.94).
+- **Average CLV by Segment:** Segment P0 has the highest average CLV (1,389).
 
 ### Consecutive Transaction Analysis
 - **Customers with Consecutive Transactions:** All 6,884 customers have made consecutive transactions.
