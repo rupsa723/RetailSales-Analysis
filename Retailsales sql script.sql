@@ -1,5 +1,3 @@
-use retailsalesdata;
-
 ### CUSTOMER KEY INSIGHTS
 #How many unique customers are there?
 SELECT COUNT(DISTINCT customer_id) AS unique_customer
