@@ -2,16 +2,17 @@
 
 ## Contents
 - [Overview](#overview)
+- [Files](#files)
 - [Data Overview](#data-overview)
-- [Data Cleaning](#data-cleaning)
-- [Descriptive Statistics](#descriptive-statistics)
-- [Exploratory Data Analysis (EDA)](#exploratory-data-analysis-eda)
-- [Outlier Detection](#outlier-detection)
-- [Feature Engineering](#feature-engineering)
-- [Customer Segmentation](#customer-segmentation)
-- [Time Series Analysis](#time-series-analysis)
-- [Customer Lifetime Value (CLV) Analysis](#customer-lifetime-value-clv-analysis)
-- [Hypothesis Testing](#hypothesis-testing)
+  - [Data Cleaning](#data-cleaning)
+  - [Descriptive Statistics](#descriptive-statistics)
+  - [Exploratory Data Analysis (EDA)](#exploratory-data-analysis-eda)
+  - [Outlier Detection](#outlier-detection)
+  - [Feature Engineering](#feature-engineering)
+  - [Customer Segmentation](#customer-segmentation)
+  - [Time Series Analysis](#time-series-analysis)
+  - [Customer Lifetime Value (CLV) Analysis](#customer-lifetime-value-clv-analysis)
+  - [Hypothesis Testing](#hypothesis-testing)
 - [SQL Analysis Insights](#sql-analysis-insights)
   - [Customer Key Insights](#customer-key-insights)
   - [RFM Analysis](#rfm-analysis)
@@ -24,16 +25,25 @@
 - [SWOT Analysis](#swot-analysis)
 - [Recommendations](#recommendations)
 - [Future Steps](#future-steps)
-
+- [Contact Information](#contact-information)
 ## Overview
 This project analyzes retail transaction data to understand customer behavior, identify transaction trends, evaluate campaign effectiveness, and perform customer segmentation. The analysis was conducted using Python for data cleaning, feature engineering, customer segmentation, time series analysis, CLV (Customer Lifetime Value) analysis, and hypothesis testing, followed by SQL for further data manipulation and insights extraction.
 
+## Files
+- `Original Dataset`: Folder consisting of original dataset obtailed from [Retail Dataset](https://www.kaggle.com/datasets/regivm/retailtransactiondata).
+- `Retailsales python script.ipynb`: Consist of .ipynb file of data cleaning and manipulation.
+- `Prepared dataset`: Folder containing datasets obtained after all cleaning and manipulation which consist of `overall_data.csv`,`main_data.csv` & `rfm.csv`.
+- `Retailsales sql script.sql`: Consist of .sql file of further data manipulation and insights extraction.
+- `Retail Sales Data Report.pptx`: Consist of the report based on the information obtained about the dataset.
 ## Data Overview
-The dataset contains the following columns:
-- `customer_id`: Identifier for customers.
-- `trans_date`: Date of the transaction.
-- `tran_amount`: Amount of the transaction.
-- `response`: Customer's response (binary).
+The dataset contains the original dataset in `Orginal Dataset` folder:
+- `Retail_Data_Transaction.csv`:
+  - `customer_id`: Identifier for customers.
+  - `trans_date`: Date of the transaction.
+  - `tran_amount`: Amount of the transaction.
+- `Retail_Data_Response.csv`:
+  - `customer_id`: Identifier for customers.
+  - `response`: Customer's response (binary).
 
 **Initial Data Checks:**
 - Shape: 125,000 rows and 4 columns.
@@ -212,3 +222,7 @@ The analysis provided detailed insights into customer behavior, segment performa
 - Enhance Engagement Efforts: Promote initiatives to reduce the average time between transactions across all segments, particularly targeting those with less frequent purchases.
 - Revise Campaign Strategies: Adjust and personalize campaigns to better engage a broader customer base and improve overall response rates.
 
+## Contact Information
+- **Author:** Rupsa Chaudhuri
+- [LinkedIn](https://www.linkedin.com/in/rupsa-chaudhuri/)
+- [GitHub Repository](https://github.com/rupsa723?tab=repositories)
