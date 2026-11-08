@@ -63,9 +63,9 @@ with its limits stated, rather than as business insight.
 | `Retail_Sales_Analysis.py` | The same thing as a script (jupytext percent format). |
 | `Retail_Sales_Analysis.pdf` | Read-only version with all charts and conclusions. |
 | `Retail_Sales_Analysis.sql` | MySQL companion: 11 sections, 37 queries. |
-| `Retail_Sales_load_data.sql` | Creates the schema and loads the data. No configuration needed. |
-| `CONCEPTS.md` | Plain-language explanation of every method used that wasn't in version 1. |
-| `data/` | Source CSVs and the three tables the notebook writes. |
+| `Original Dataset/` | Source CSVs |
+| `Derived Data/` |The three tables the notebook writes. |
+
 
 ---
 
