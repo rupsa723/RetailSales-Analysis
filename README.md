@@ -1,227 +1,222 @@
-# README
+# Retail Sales Analysis
+
+Transaction and campaign-response analysis of a retail customer base.
+124,969 transactions, 6,884 customers, May 2011 to March 2015.
+
+Python (pandas, scikit-learn, matplotlib, seaborn) and MySQL.
+
+> **Version 2.** This is a rebuild of an earlier analysis of the same dataset.
+> The first version ran its segmentation and statistical tests on transaction
+> rows rather than on customers, which weighted every result by how often each
+> person bought, and it reported seasonal patterns that turned out to be
+> calendar artifacts. Both are fixed here, and a cohort retention analysis has
+> been added. [What changed and why](#what-changed-from-version-1).
+
+---
 
 ## Contents
-- [Overview](#overview)
+
+- [The headline findings](#the-headline-findings)
 - [Files](#files)
-- [Data Overview](#data-overview)
-  - [Data Cleaning](#data-cleaning)
-  - [Descriptive Statistics](#descriptive-statistics)
-  - [Exploratory Data Analysis (EDA)](#exploratory-data-analysis-eda)
-  - [Feature Engineering](#feature-engineering)
-  - [Customer Segmentation](#customer-segmentation)
-  - [Time Series Analysis](#time-series-analysis)
-  - [Customer Lifetime Value (CLV) Analysis](#customer-lifetime-value-clv-analysis)
-  - [Hypothesis Testing](#hypothesis-testing)
-- [SQL Analysis Insights](#sql-analysis-insights)
-  - [Customer Key Insights](#customer-key-insights)
-  - [RFM Analysis](#rfm-analysis)
-  - [Behavior and Performance by Segment](#behavior-and-performance-by-segment)
-  - [Campaign Performance](#campaign-performance)
-  - [Trends and Seasonality](#trends-and-seasonality)
-  - [Customer Lifetime Value (CLV) Insights](#customer-lifetime-value-clv-insights)
-  - [Consecutive Transaction Analysis](#consecutive-transaction-analysis)
-- [Conclusion](#conclusion)
-- [SWOT Analysis](#swot-analysis)
-- [Recommendations](#recommendations)
-- [Future Steps](#future-steps)
-- [Contact Information](#contact-information)
-## Overview
-This project analyzes retail transaction data to understand customer behavior, identify transaction trends, evaluate campaign effectiveness, and perform customer segmentation. The analysis was conducted using Python for data cleaning, feature engineering, customer segmentation, time series analysis, CLV (Customer Lifetime Value) analysis, and hypothesis testing, followed by SQL for further data manipulation and insights extraction.
+- [Data](#data)
+- [Method](#method)
+- [What changed from version 1](#what-changed-from-version-1)
+- [Limitations](#limitations)
+- [Running it](#running-it)
+- [Contact](#contact)
+
+---
+
+## The headline findings
+
+**Contact P0 and skip P2.** The top customer tier is 27.7% of the base and
+holds 50.9% of everyone who responded to the campaign, a lift of 1.84x. The
+bottom tier is 30.1% of the base and 7.0% of responders, 0.23x. A campaign
+restricted to P0 reaches half the responders for roughly a quarter of the
+contact cost.
+
+**Set the reactivation trigger at 99 days.** 75% of repeat purchases happen
+within 99 days of the previous one, so a customer past that point is outside
+normal behaviour for this base. Per segment it differs enough to be worth
+setting separately: P0 returns in 55 days on average, P1 in 73, P2 in 104.
+
+**There is no seasonality, no trend and no volatility.** Raw monthly revenue
+looks choppy. Divided by the number of days each month actually covers, it is
+5,802 per day with a standard deviation of 133 — a coefficient of variation of
+2.3% across 47 months. Every apparent pattern was month length.
+
+**The dataset is generated, not observed.** Cohort analysis shows no
+acquisition and no churn: an arrival model assuming every customer already
+existed before the file opened predicts 6,810 first appearances against 6,826
+observed, and only 38 customers in 6,884 stop buying before 2014. Retention is
+flat at 68.9% against a 68.7% base rate, so cohort membership carries no
+information. The analysis is therefore written up as a demonstration of method
+with its limits stated, rather than as business insight.
+
+---
 
 ## Files
-- `Original Dataset`: Folder consisting of original dataset obtailed from [Retail Dataset](https://www.kaggle.com/datasets/regivm/retailtransactiondata).
-- `Retailsales python script.ipynb`: Consist of .ipynb file of data cleaning and manipulation.
-- `Prepared dataset`: Folder containing datasets obtained after all cleaning and manipulation which consist of `overall_data.csv`,`main_data.csv` & `rfm.csv`.
-- `Retailsales sql script.sql`: Consist of .sql file of further data manipulation and insights extraction.
-- `Retail Sales Data Report.pptx`: Consist of the report based on the information obtained about the dataset.
-## Data Overview
-The dataset contains the original dataset in `Orginal Dataset` folder:
-- `Retail_Data_Transaction.csv`:
-  - `customer_id`: Identifier for customers.
-  - `trans_date`: Date of the transaction.
-  - `tran_amount`: Amount of the transaction.
-- `Retail_Data_Response.csv`:
-  - `customer_id`: Identifier for customers.
-  - `response`: Customer's response (binary).
 
-**Initial Data Checks:**
-- Shape: 125,000 rows and 4 columns.
-- Data Types:
-  - `customer_id`: Object.
-  - `trans_date`: Object (converted to datetime).
-  - `tran_amount`: Integer.
-  - `response`: Float (converted to integer).
+| File | What it is |
+|---|---|
+| `Retail_Sales_Analysis.ipynb` | The analysis. 13 sections, each ending in a conclusion. |
+| `Retail_Sales_Analysis.py` | The same thing as a script (jupytext percent format). |
+| `Retail_Sales_Analysis.pdf` | Read-only version with all charts and conclusions. |
+| `Retail_Sales_Analysis.sql` | MySQL companion: 11 sections, 37 queries. |
+| `Retail_Sales_load_data.sql` | Creates the schema and loads the data. No configuration needed. |
+| `CONCEPTS.md` | Plain-language explanation of every method used that wasn't in version 1. |
+| `data/` | Source CSVs and the three tables the notebook writes. |
 
-## Data Cleaning
-**Handling Missing Values:**
-- The response column had 31 null values (0.25% of the dataset), which were dropped.
+---
 
-**Data Type Conversions:**
-- `trans_date` was converted to datetime.
-- `response` was converted to integer.
+## Data
 
-**Outlier Detection:**
-- **Box Plots:** No outliers detected in `tran_amount` and `response`.
-  
-## Descriptive Statistics
-**Transaction Amount:**
-- Mean: 64.99
-- Standard Deviation: 22.86
-- Min: 10
-- Max: 105
+[Kaggle retail transaction dataset](https://www.kaggle.com/datasets/regivm/retailtransactiondata),
+two files:
 
-**Response:**
-- Mean: 0.11
-- Standard Deviation: 0.31
-- Min: 0
-- Max: 1
+- `Retail_Data_Transactions.csv` — `customer_id`, `trans_date`, `tran_amount`
+- `Retail_Data_Response.csv` — `customer_id`, `response` (binary campaign flag)
 
-## Exploratory Data Analysis (EDA)
-- **Distribution of Transaction Amounts:** Most transactions range between 40 and 100.
-- **Distribution of Response:** Binary distribution with counts for 0 and 1.
-- **Distribution of Frequency:** Histogram of transaction frequencies per customer.
-- **Distribution of Monetary:** Histogram of total monetary values per customer.
+125,000 rows before cleaning. 31 rows have no response value, belonging to five
+customers absent from the response file; dropped, leaving 124,969.
 
-## Feature Engineering
-A new dataset was created with:
-- `customer_id`: Identifier for customers.
-- `recency`: Date of the most recent transaction.
-- `frequency`: Number of transactions.
-- `monetary`: Total amount spent.
+Six exact duplicate transactions exist. Too few to move any figure, recorded
+rather than silently removed.
 
-**Process:**
-- Grouped the data by `customer_id`.
-- Calculated recency as the maximum `trans_date` for each customer.
-- Calculated frequency as the count of `trans_date` for each customer.
-- Calculated monetary as the sum of `tran_amount` for each customer.
+The file opens on **16 May 2011** and closes on **16 March 2015**, so the first
+and last months each cover 16 days. Every monthly figure in the analysis is
+divided by days covered for that reason.
 
-## Customer Segmentation
-**Method:** K-means clustering on standardized features (frequency and monetary).
+No currency is given in the source, so all money figures are unlabelled units.
 
-**Segments:**
-- P0: High frequency and high monetary value.
-- P1: Medium frequency and medium monetary value.
-- P2: Low frequency and low monetary value.
+---
 
-## Time Series Analysis
-**Objective:** Analyze sales trends over time.
+## Method
 
-**Findings:**
-- **Overall Trend:** Relatively stable sales with minor fluctuations.
-- **Seasonality:** No clear seasonal pattern; fluctuations appear random.
-- **Outliers:** Drops in sales around January 2013 and May 2015.
-- **End of Series:** Sharp decline in May 2015.
-- **Volatility:** Periodic dips and peaks indicating some level of volatility in monthly sales figures.
+**Customer table first.** The source is one row per transaction, but most of the
+questions are about customers. Everything after the load works from a
+6,884-row customer table. Mixing the two grains is the easiest way to get a
+wrong answer here — a customer with 39 purchases would otherwise be counted 39
+times in any average or test.
 
-## Customer Lifetime Value (CLV) Analysis
-**Method:** Calculate average order value, purchase frequency, and churn rate.
+**Segmentation.** K-means on standardised purchase count and total spend,
+fitted on customers. Validated rather than asserted: silhouette falls
+monotonically from k=2 (0.541) to k=7 (0.398), the two features correlate at
+0.93, the first principal component holds 96.7% of the variance, and against
+uniform noise over the same range the real data scores only 0.46–0.54 versus
+0.38–0.41. There are no natural clusters — the customers lie on a line. k=3 is
+kept as a usable banding and the limitation is stated.
 
-**Findings:**
-- **Distribution of CLV:** Two peaks indicating segments with lower and higher CLV.
-- **Segment Analysis:**
-  - P0: High CLV.
-  - P1: Medium CLV.
-  - P2: Low CLV.
+| Segment | Customers | % of base | Purchases | Basket | Total spend | % of revenue |
+|---|---|---|---|---|---|---|
+| P0 | 1,904 | 27.7% | 24.45 | 70.76 | 1,728.28 | 40.5% |
+| P1 | 2,906 | 42.2% | 18.19 | 67.61 | 1,226.01 | 43.9% |
+| P2 | 2,074 | 30.1% | 12.32 | 49.73 | 611.83 | 15.6% |
 
-## Hypothesis Testing
-**Chi-Square Test for Independence**
-- **Objective:** Test the relationship between customer segment and response.
-- **Results:**
-  - Chi-Square Statistic: 3726.525
-  - P-value: 0.0
-  - Conclusion: Significant relationship between customer segment and response, indicating dependency.
+**RFM.** Scored by quintile rather than fixed thresholds, because the median
+customer last bought 53 days ago and a 200-day cutoff puts 91.6% of the base in
+one bucket. Scored that way, recency runs *backwards* against campaign
+response — the least recent quintile responds at 11.25% and the most recent at
+6.02%. Reported as a property of this dataset rather than explained away.
 
-**ANOVA (Analysis of Variance)**
-- **Objective:** Compare the means of transaction amounts across different customer segments.
-- **Results:**
-  - F-statistic: 7691.416
-  - P-value: 0.0
-  - Conclusion: Significant difference in mean transaction amount across segments.
+**Statistics.** Both tests run on 6,884 customers with effect sizes reported
+alongside, because at that size a p-value is effectively guaranteed.
 
-## SQL Analysis Insights
-### Customer Key Insights
-- **Unique Customers:** There are 6,884 unique customers.
-- **Average Transaction Amount per Customer:** 64.99
-- **Average Spend per Customer:** 1,179.9
-- **Top 5 Customers by Transaction Count:** Customers CS4424 (39), CS4320 (38), CS3799 (36), CS5109 (35), and CS3013 (35).
-- **Top 5 Customers by Total Spend:** Customers CS4424 (2,933), CS4320 (2,647), CS5752 (2,612), CS4660 (2,527), and CS3799 (2,513).
+- Segment vs response: chi-square 266.15, **Cramér's V 0.197** (weak-moderate)
+- Segment vs recency: F 245.04, **η² 0.066**, Kruskal-Wallis H 331.52
 
-### RFM Analysis
-- **Largest Customer Segment:** The 'Recent, Medium, Medium Value' segment is the largest.
-- **Customer Segment Trends:** Medium-value segments show growth, while high-frequency segments maintain consistent engagement from 2011 to 2014.
-- **Response Rate by Recency Segment:** Recent customers have the highest response rate (9.55%), followed by Medium (8.54%), and Old (1.52%).
-- **Revenue Contribution by RFM Segment:** The 'Recent, Medium, Medium Value' segment generates the highest revenue ($246,656).
+Recency is used for the ANOVA rather than transaction amount, because the
+segments were built by clustering on spend and testing them against spend would
+be circular.
 
-### Behavior and Performance by Segment
-- **Unique Customers by Segment:** Segment P1 has the largest unique customer base (2,493).
-- **Average Transaction Amount by Segment:** Segment P0 has the highest average transaction amount (70.75).
-- **Average Frequency of Purchases by Segment:** Segment P0 has the highest average frequency (25.5).
-- **Average Monetary Value by Segment:** Segment P0 has the highest average monetary value (1,802.6).
-- **Consistency in Average Order Value:** Segment P0 has the most consistent average order value with the lowest standard deviation (4.03).
+**Customer value.** Average order value × the customer's own monthly purchase
+rate × 12 months. No churn term, so it assumes customers continue at their
+observed rate. Checked against reality before reporting: 2,237,678 projected
+against 2,108,426 of revenue actually recorded in the final twelve months, a
+ratio of 1.06.
 
-### Campaign Performance
-- **Overall Response Rate:** 11% of customers responded positively to the campaign.
-- **Response Rate by Segment:** Segment P0 has the highest response rate (18%).
-- **Campaign Performance Over Time:** Improved campaign performance from 2011 to 2014, with response rates consistently above 10%.
+**Cohort retention.** Quarterly acquisition cohorts, chosen because the median
+purchase gap is 49 days and a monthly grid would measure buying rhythm rather
+than retention. Four censoring diagnostics run before the triangle is read.
 
-### Trends and Seasonality
-- **Top Transaction Dates:** High customer activity in 2011 and mid-2014.
-- **Peak Transaction Year:** 2013 has the highest transaction count (32,900).
-- **Peak Transaction Month:** August has the highest transaction count (11,195).
-- **Average Transaction Amount Trend:** Stable and consistent around $65 from 2011 to 2015.
+---
 
-### Customer Lifetime Value (CLV) Insights
-- **Maximum and Minimum CLV:** Maximum CLV is 1,716, and minimum CLV is 524.23.
-- **Total CLV by Segment:** Segment P1 has the highest total CLV (74,771,322.94).
-- **Average CLV by Segment:** Segment P0 has the highest average CLV (1,389).
+## What changed from version 1
 
-### Consecutive Transaction Analysis
-- **Customers with Consecutive Transactions:** All 6,884 customers have made consecutive transactions.
-- **Average Time Between Consecutive Transactions:** 72.37 days.
-- **Customers with Consecutive Transactions by Segment:** Segment P1 (2,913) has the most customers with consecutive transactions.
-- **Average Time Between Consecutive Transactions by Segment:** Segment P0 has the lowest average time (53 days).
+Version 1 is kept in the repository history. The substantive changes:
 
-## Conclusion
-The analysis provided detailed insights into customer behavior, segment performance, and campaign effectiveness. It highlighted the most valuable customer segments, trends in transaction amounts, and the effectiveness of marketing campaigns. These insights can help in formulating targeted strategies to enhance customer engagement, maximize revenue, and improve campaign performance.
+| | Version 1 | Version 2 |
+|---|---|---|
+| Statistical grain | Tests on 124,969 transaction rows | 6,884 customers |
+| Chi-square | 3,726.5 | **266.15**, with Cramér's V 0.197 |
+| ANOVA | Transaction amount (circular) | Recency, with η² 0.066 |
+| Clustering | Fitted on transaction rows, k=3 asserted | Fitted on customers, k validated |
+| Response rate | 11% (transaction-weighted) | **9.40%** (per customer) |
+| Customer value | AOV × a global constant | AOV × each customer's own rate, sanity-checked |
+| Total customer value | 74,771,322 (9× actual revenue) | **2,237,678** (ratio 1.06 to observed) |
+| Seasonality | April dip, August peak | None — both were month-length artifacts |
+| Volatility | "Periodic dips and peaks" | None — CV of 2.3% per day |
+| Campaign over time | "Improved 2011 to 2014" | Not measurable; the flag has no date |
+| Retention | Not analysed | Cohort triangle, flat on the base rate |
 
-## SWOT Analysis
-**Strengths:**
-- High-value customers (P0) show strong engagement and high transaction amounts.
-- Segment P0 has the shortest average time between consecutive transactions (53 days), indicating strong engagement.
-- Stable average spending of around $65.
-- Recent and medium-frequency segments contribute significantly to revenue and show higher engagement.
+Three other corrections worth naming:
 
-**Weaknesses:**
-- Low overall campaign response rate of 11%.
-- Segment P2 has low engagement and value, with the longest average time between consecutive transactions (100 days).
-- Variability in CLV among segments suggests inconsistent customer value.
-- April has the lowest transaction count (7,973), suggesting a potential seasonal dip.
+- A SQL query grouped by customer while selecting an ungrouped transaction
+  amount, so it summed one arbitrary purchase per customer. The revenue figure
+  it produced came from a pool of 434,203 instead of 8,122,378.
+- The conclusion claimed a linear regression result. No regression existed in
+  the notebook.
+- Two charts in the same notebook reported segment shares that disagreed, one
+  counting transactions and one counting customers.
 
-**Opportunities:**
-- Target Segment P2 with personalized marketing to boost engagement.
-- Continue leveraging high-value Segment P0 and “Recent-Medium-Medium Value” customers with loyalty programs.
-- Promote strategies to encourage more frequent transactions among lower-value segments.
-- Develop strategies to counteract low transaction counts in April.
+Full method notes for everything added are in [`CONCEPTS.md`](CONCEPTS.md).
 
-**Threats:**
-- Vulnerability to external disruptions, as seen in sales drops in early 2013 and 2015.
-- Market saturation limits growth potential without innovative strategies.
-- Segment P2’s infrequent engagement poses a risk if not addressed, potentially impacting overall revenue growth.
+---
 
-## Recommendations
-- **Enhanced Targeting for Low Spend Segments:** Develop and implement targeted campaigns to increase engagement and spending in Segment P2 and other lower-value groups.
-- **Maximize High-Value Customer Potential:** Focus on retaining and growing Segment P0 through loyalty programs and personalized offers to maintain high engagement and revenue.
-- **Utilize RFM Insights:** Prioritize strategies that cater to "Recent-Medium-Medium Value" and "Frequent-High" segments to optimize revenue and engagement.
-- **Adapt to Sales Fluctuations:** Monitor and adapt strategies to address seasonal and external factors impacting sales trends and campaign performance, especially focusing on mitigating declines like those observed in April.
+## Limitations
 
-## Future Steps
-- Implement Targeted Marketing: Focus on strategies to enhance engagement and spending in low-value segments, using insights from RFM analysis.
-- Optimize Customer Retention: Develop programs to retain high-value customers and increase their lifetime value, particularly focusing on P0 and "Recent-Medium-Medium Value" customers.
-- Monitor and Adapt Strategies: Continuously track sales trends and campaign performance, adapting strategies to address external factors and seasonal fluctuations.
-- Enhance Engagement Efforts: Promote initiatives to reduce the average time between transactions across all segments, particularly targeting those with less frequent purchases.
-- Revise Campaign Strategies: Adjust and personalize campaigns to better engage a broader customer base and improve overall response rates.
+Stated up front rather than left to be found.
 
-## Contact Information
-- **Author:** Rupsa Chaudhuri
-- [LinkedIn](https://www.linkedin.com/in/rupsa-chaudhuri/)
-- [GitHub Repository](https://github.com/rupsa723?tab=repositories)
+- **The dataset appears to be generated.** Findings demonstrate method, not a
+  real business.
+- **The segments are a banding, not a discovery.** Purchase count and total
+  spend are two views of the same behaviour.
+- **The acquisition cohorts are fully left-censored** — not merely the early
+  ones. First-transaction date is the arrival time of an already-active
+  customer. The standard washout fix would leave cohorts of fewer than ten
+  people, so it is stated rather than applied.
+- **The far end is right-censored**, so any lifetime estimate measures the
+  observation window rather than customer behaviour.
+- **Both end months are partial**, 16 days each.
+- **The campaign response flag has no date.** One static value per customer, so
+  response cannot be tracked over time or tied to a specific campaign.
+- **Recency behaves backwards against response**, the opposite of what RFM
+  practice assumes.
+- **The 12-month value estimate contains no churn term.**
+- **No causal claims are supported.** Segment membership is derived from the
+  same purchase behaviour it is then used to describe.
+- **No currency is given** in the source data.
+
+---
+
+## Running it
+
+**Python.** Set `DATA_DIR` in the first cell and run top to bottom. Needs
+pandas, numpy, scikit-learn, scipy, matplotlib, seaborn. The last cell writes
+the three CSVs the SQL stage reads.
+
+In the `.py` version, `SHOW_CHARTS = False` runs the numbers without opening
+nine plot windows.
+
+**SQL.** Run `Retail_Sales_load_data.sql` first — File → Open SQL Script, then
+Execute All. It creates the schema, builds the table and inserts all 124,969
+rows with no server configuration. Then open `Retail_Sales_Analysis.sql` and
+start at Section 1.
+
+---
+
+## Contact
+
+**Rupsa Chaudhuri**
+[LinkedIn](https://www.linkedin.com/in/rupsa-chaudhuri/) ·
+[GitHub](https://github.com/rupsa723)
