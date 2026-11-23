@@ -59,8 +59,7 @@ the data, not a signup date. Retention is read within that limit.
 
 ## Data
 
-[Kaggle retail transaction dataset](https://www.kaggle.com/datasets/regivm/retailtransactiondata),
-two files:
+Two files:
 
 - `Retail_Data_Transactions.csv`: `customer_id`, `trans_date`, `tran_amount`
 - `Retail_Data_Response.csv`: `customer_id`, `response` (yes/no campaign flag)
